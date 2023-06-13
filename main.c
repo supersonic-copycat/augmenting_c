@@ -3,6 +3,8 @@
 #include <stdlib.h>
 #include <unistd.h>
 
+#include "libguile.h"
+
 static FILE *global_output = NULL;
 static const int WIDTH = 10;
 static const int HEIGHT = 10;
