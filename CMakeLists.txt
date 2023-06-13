@@ -6,3 +6,4 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(CMAKE_C_FLAGS "-Wall -std=gnu11 -ggdb -Wno-unused-variable ${CMAKE_C_FLAGS}")
 
 add_executable(AugmentingC main.c)
+target_link_libraries(AugmentingC m)
