@@ -110,7 +110,7 @@ function (_guile_find_component_include_dir component header)
     "${GUile_ROOT_DIR}"
     ENV Guile_ROOT_DIR
     PATH_SUFFIXES
-    Guile guile Guile-2.0 guile-2.0 Guile/2.0 guile/2.0 GC
+    Guile guile Guile-2.2 guile-2.2 Guile/2.2 guile/2.2 GC
     gc)
 
   set ("${component}_INCLUDE_DIR" "${${component}_INCLUDE_DIR}"
@@ -120,7 +120,7 @@ endfunction ()
 function (_guile_find_component_library component_name component)
 
   find_library ("${component_name}_LIBRARY_RELEASE"
-    NAMES "${component}" "${component}-2.0"
+    NAMES "${component}" "${component}-2.2"
     HINTS
     "${GUile_ROOT_DIR}"
     ENV Guile_ROOT_DIR
