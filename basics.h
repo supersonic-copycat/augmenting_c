@@ -1,13 +1,13 @@
 #include <math.h>
 #include <stdio.h>
 
-FILE *global_output = NULL;
+extern FILE *global_output; 
 
-static struct tortoise {
+struct tortoise {
   double x, y;
   double direction;
   int pendown;
-} tortoise = {.x = 0.0, .y = 0.0, .direction = 0.0, .pendown = 1};
+};
 
 struct coord_pair {
   double x, y;

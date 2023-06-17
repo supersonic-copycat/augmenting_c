@@ -9,6 +9,7 @@
 static const int WIDTH = 10;
 static const int HEIGHT = 10;
 
+FILE *global_output;
 
 static FILE *start_gnuplot() {
   FILE *output;

@@ -1,5 +1,7 @@
 #include "basics.h"
 
+struct tortoise tortoise = {.x = 0.0, .y = 0.0, .direction = 0.0, .pendown = 1};
+
 void draw_line(FILE *output, double x1, double y1, double x2, double y2) {
   fprintf(output, "plot [0:1] %f + %f * t, %f + %f * t notitle\n", x1, x2 - x1,
           y1, y2 - y1);
