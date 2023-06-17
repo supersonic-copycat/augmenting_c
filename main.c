@@ -9,9 +9,11 @@ static FILE *global_output = NULL;
 static const int WIDTH = 10;
 static const int HEIGHT = 10;
 
-static double x, y;
-static double direction;
-static int pendown;
+static struct tortoise {
+  double x, y;
+  double direction;
+  int pendown;
+} tortoise = {.x = 0.0, .y = 0.0, .direction = 0.0, .pendown = 1};
 
 struct coord_pair {
   double x, y;
@@ -54,9 +56,9 @@ static void draw_line(FILE *output, double x1, double y1, double x2,
 }
 
 static void tortoise_reset() {
-  x = y = 0.0;
-  direction = 0.0;
-  pendown = 1;
+  tortoise.x = tortoise.y = 0.0;
+  tortoise.direction = 0.0;
+  tortoise.pendown = 1;
 
   fprintf(global_output, "clear\n");
   fflush(global_output);
@@ -68,14 +70,14 @@ static SCM tortoise_reset_guile() {
 }
 
 static int tortoise_pendown() {
-  int result = pendown;
-  pendown = 1;
+  int result = tortoise.pendown;
+  tortoise.pendown = 1;
   return result;
 }
 
 static int tortoise_penup() {
-  int result = pendown;
-  pendown = 0;
+  int result = tortoise.pendown;
+  tortoise.pendown = 0;
   return result;
 }
 static SCM tortoise_pendown_guile() {
@@ -89,8 +91,8 @@ static SCM tortoise_penup_guile() {
 }
 
 static double tortoise_turn(double degree) {
-  direction += M_PI / 180.0 * degree;
-  return direction * 180.0 / M_PI;
+  tortoise.direction += M_PI / 180.0 * degree;
+  return tortoise.direction * 180.0 / M_PI;
 }
 
 static SCM tortoise_turn_guile(SCM degrees) {
@@ -102,14 +104,14 @@ static SCM tortoise_turn_guile(SCM degrees) {
 struct coord_pair tortoise_move(double length) {
   double newX, newY;
 
-  newX = x + length * cos(direction);
-  newY = y + length * sin(direction);
+  newX = tortoise.x + length * cos(tortoise.direction);
+  newY = tortoise.y + length * sin(tortoise.direction);
 
-  if (pendown)
-    draw_line(global_output, x, y, newX, newY);
+  if (tortoise.pendown)
+    draw_line(global_output, tortoise.x, tortoise.y, newX, newY);
 
-  x = newX;
-  y = newY;
+  tortoise.x = newX;
+  tortoise.y = newY;
   struct coord_pair result = {.x = newX, .y = newY};
   return result;
 }
