@@ -48,32 +48,50 @@ static void draw_line(FILE *output, double x1, double y1, double x2,
   fflush(output);
 }
 
-static SCM tortoise_reset() {
+static void tortoise_reset() {
   x = y = 0.0;
   direction = 0.0;
   pendown = 1;
 
   fprintf(global_output, "clear\n");
   fflush(global_output);
+}
+
+static SCM tortoise_reset_guile() {
+  tortoise_reset();
   return SCM_UNSPECIFIED;
 }
 
-static SCM tortoise_pendown() {
-  SCM result = scm_from_bool(pendown);
+static int tortoise_pendown() {
+  int result = pendown;
   pendown = 1;
   return result;
 }
 
-static SCM tortoise_penup() {
-  SCM result = scm_from_bool(pendown);
+static int tortoise_penup() {
+  int result = pendown;
   pendown = 0;
   return result;
 }
+static SCM tortoise_pendown_guile() {
+  SCM result = scm_from_bool(tortoise_pendown());
+  return result;
+}
 
-static SCM tortoise_turn(SCM degrees) {
+static SCM tortoise_penup_guile() {
+  SCM result = scm_from_bool(tortoise_penup());
+  return result;
+}
+
+static double tortoise_turn(double degree) {
+  direction += M_PI / 180.0 * degree;
+  return direction * 180.0 / M_PI;
+}
+
+static SCM tortoise_turn_guile(SCM degrees) {
   const double value = scm_to_double(degrees);
-  direction += M_PI / 180.0 * value;
-  return scm_from_double(direction * 180.0 / M_PI);
+  double result = tortoise_turn(value);
+  return scm_from_double(result);
 }
 
 static SCM tortoise_move(SCM length) {
@@ -93,11 +111,11 @@ static SCM tortoise_move(SCM length) {
 }
 
 static void *register_functions(void *data) {
-  scm_c_define_gsubr("tortoise-reset", 0, 0, 0, &tortoise_reset);
-  scm_c_define_gsubr("tortoise-penup", 0, 0, 0, &tortoise_penup);
-  scm_c_define_gsubr("tortoise-pendown", 0, 0, 0, &tortoise_pendown);
-  scm_c_define_gsubr("tortoise-turn", 1, 0, 0, &tortoise_turn);
   scm_c_define_gsubr("tortoise-move", 1, 0, 0, &tortoise_move);
+  scm_c_define_gsubr("tortoise-reset", 0, 0, 0, &tortoise_reset_guile);
+  scm_c_define_gsubr("tortoise-penup", 0, 0, 0, &tortoise_penup_guile);
+  scm_c_define_gsubr("tortoise-pendown", 0, 0, 0, &tortoise_pendown_guile);
+  scm_c_define_gsubr("tortoise-turn", 1, 0, 0, &tortoise_turn_guile);
   return NULL;
 }
 
