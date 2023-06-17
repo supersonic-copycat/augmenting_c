@@ -1,3 +1,5 @@
+#ifndef _TORTOISE_TUTORIAL_BASIC_H_
+#define _TORTOISE_TUTORIAL_BASIC_H_
 #include <math.h>
 #include <stdio.h>
 
@@ -24,3 +26,4 @@ int tortoise_penup();
 double tortoise_turn(double degree);
 
 struct coord_pair tortoise_move(double length);
+#endif //_TORTOISE_TUTORIAL_BASIC_H_
