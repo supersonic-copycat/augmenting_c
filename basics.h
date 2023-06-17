@@ -3,7 +3,7 @@
 #include <math.h>
 #include <stdio.h>
 
-extern FILE *global_output; 
+extern FILE *global_output;
 
 struct tortoise {
   double x, y;

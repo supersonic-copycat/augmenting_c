@@ -9,5 +9,5 @@ find_package(Guile)
 
 include_directories( ${CMAKE_CURRENT_SOURCE_DIR} ${Guile_INCLUDE_DIR})
 
-add_executable(AugmentingC main.c basics.c)
+add_executable(AugmentingC main.c basics.c guiled.c)
 target_link_libraries(AugmentingC ${Guile_LIBRARIES} m)
