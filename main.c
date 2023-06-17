@@ -2,14 +2,12 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
+#include "basics.h"
 
-static FILE *global_output = NULL;
 static const int WIDTH = 10;
 static const int HEIGHT = 10;
 
-static double x, y;
-static double direction;
-static int pendown;
+FILE *global_output;
 
 static FILE *start_gnuplot() {
   FILE *output;
@@ -22,7 +20,8 @@ static FILE *start_gnuplot() {
   if (!pid) {
     // we are in child
     dup2(pipes[0], STDIN_FILENO);
-    execlp("gnuplot", (char *)NULL);
+    char *const args[] = {"gnuplot", NULL};
+    execvp("gnuplot", args);
     /*unreachable*/
     return NULL;
   }
@@ -37,42 +36,6 @@ static FILE *start_gnuplot() {
   fprintf(output, "unset ytics\n");
   fflush(output);
   return output;
-}
-static void draw_line(FILE *output, double x1, double y1, double x2,
-                      double y2) {
-  fprintf(output, "plot [0:1] %f + %f * t, %f + %f * t notitle\n", x1, x2 - x1,
-          y1, y2 - y1);
-  fflush(output);
-}
-
-static void tortoise_reset() {
-  x = y = 0.0;
-  direction = 0.0;
-  pendown = 1;
-
-  fprintf(global_output, "clear\n");
-  fflush(global_output);
-}
-
-static void tortoise_pendown() { pendown = 1; }
-
-static void tortoise_penup() { pendown = 0; }
-
-static void tortoise_turn(double degrees) {
-  direction += M_PI / 180.0 * degrees;
-}
-
-static void tortoise_move(double length) {
-  double newX, newY;
-
-  newX = x + length * cos(direction);
-  newY = y + length * sin(direction);
-
-  if (pendown)
-    draw_line(global_output, x, y, newX, newY);
-
-  x = newX;
-  y = newY;
 }
 
 int main(int argc, char **argv, char **envp) {
