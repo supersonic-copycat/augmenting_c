@@ -2,22 +2,13 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
+#include "basics.h"
 
 #include "libguile.h"
 
-static FILE *global_output = NULL;
 static const int WIDTH = 10;
 static const int HEIGHT = 10;
 
-static struct tortoise {
-  double x, y;
-  double direction;
-  int pendown;
-} tortoise = {.x = 0.0, .y = 0.0, .direction = 0.0, .pendown = 1};
-
-struct coord_pair {
-  double x, y;
-};
 
 static FILE *start_gnuplot() {
   FILE *output;
@@ -48,38 +39,12 @@ static FILE *start_gnuplot() {
   return output;
 }
 
-static void draw_line(FILE *output, double x1, double y1, double x2,
-                      double y2) {
-  fprintf(output, "plot [0:1] %f + %f * t, %f + %f * t notitle\n", x1, x2 - x1,
-          y1, y2 - y1);
-  fflush(output);
-}
-
-static void tortoise_reset() {
-  tortoise.x = tortoise.y = 0.0;
-  tortoise.direction = 0.0;
-  tortoise.pendown = 1;
-
-  fprintf(global_output, "clear\n");
-  fflush(global_output);
-}
 
 static SCM tortoise_reset_guile() {
   tortoise_reset();
   return SCM_UNSPECIFIED;
 }
 
-static int tortoise_pendown() {
-  int result = tortoise.pendown;
-  tortoise.pendown = 1;
-  return result;
-}
-
-static int tortoise_penup() {
-  int result = tortoise.pendown;
-  tortoise.pendown = 0;
-  return result;
-}
 static SCM tortoise_pendown_guile() {
   SCM result = scm_from_bool(tortoise_pendown());
   return result;
@@ -90,31 +55,12 @@ static SCM tortoise_penup_guile() {
   return result;
 }
 
-static double tortoise_turn(double degree) {
-  tortoise.direction += M_PI / 180.0 * degree;
-  return tortoise.direction * 180.0 / M_PI;
-}
-
 static SCM tortoise_turn_guile(SCM degrees) {
   const double value = scm_to_double(degrees);
   double result = tortoise_turn(value);
   return scm_from_double(result);
 }
 
-struct coord_pair tortoise_move(double length) {
-  double newX, newY;
-
-  newX = tortoise.x + length * cos(tortoise.direction);
-  newY = tortoise.y + length * sin(tortoise.direction);
-
-  if (tortoise.pendown)
-    draw_line(global_output, tortoise.x, tortoise.y, newX, newY);
-
-  tortoise.x = newX;
-  tortoise.y = newY;
-  struct coord_pair result = {.x = newX, .y = newY};
-  return result;
-}
 
 static SCM tortoise_move_guile(SCM length) {
   const double value = scm_to_double(length);

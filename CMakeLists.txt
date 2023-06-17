@@ -7,7 +7,7 @@ set(CMAKE_C_FLAGS "-Wall -std=gnu11 -ggdb -Wno-unused-variable ${CMAKE_C_FLAGS}"
 
 find_package(Guile)
 
-include_directories(${Guile_INCLUDE_DIR})
+include_directories( ${CMAKE_CURRENT_SOURCE_DIR} ${Guile_INCLUDE_DIR})
 
 add_executable(AugmentingC main.c)
 target_link_libraries(AugmentingC ${Guile_LIBRARIES} m)
