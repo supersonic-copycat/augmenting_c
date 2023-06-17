@@ -24,7 +24,8 @@ static FILE *start_gnuplot() {
   if (!pid) {
     // we are in child
     dup2(pipes[0], STDIN_FILENO);
-    execlp("gnuplot", (char *)NULL);
+    char *const args[] = {"gnuplot", NULL};
+    execvp("gnuplot", args);
     /*unreachable*/
     return NULL;
   }
