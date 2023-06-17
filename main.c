@@ -13,6 +13,10 @@ static double x, y;
 static double direction;
 static int pendown;
 
+struct coord_pair {
+  double x, y;
+};
+
 static FILE *start_gnuplot() {
   FILE *output;
   int pipes[2];
@@ -41,6 +45,7 @@ static FILE *start_gnuplot() {
   fflush(output);
   return output;
 }
+
 static void draw_line(FILE *output, double x1, double y1, double x2,
                       double y2) {
   fprintf(output, "plot [0:1] %f + %f * t, %f + %f * t notitle\n", x1, x2 - x1,
@@ -94,28 +99,33 @@ static SCM tortoise_turn_guile(SCM degrees) {
   return scm_from_double(result);
 }
 
-static SCM tortoise_move(SCM length) {
-  const double value = scm_to_double(length);
+struct coord_pair tortoise_move(double length) {
   double newX, newY;
 
-  newX = x + value * cos(direction);
-  newY = y + value * sin(direction);
+  newX = x + length * cos(direction);
+  newY = y + length * sin(direction);
 
   if (pendown)
     draw_line(global_output, x, y, newX, newY);
 
   x = newX;
   y = newY;
+  struct coord_pair result = {.x = newX, .y = newY};
+  return result;
+}
 
-  return scm_list_2(scm_from_double(x), scm_from_double(y));
+static SCM tortoise_move_guile(SCM length) {
+  const double value = scm_to_double(length);
+  struct coord_pair result = tortoise_move(value);
+  return scm_list_2(scm_from_double(result.x), scm_from_double(result.y));
 }
 
 static void *register_functions(void *data) {
-  scm_c_define_gsubr("tortoise-move", 1, 0, 0, &tortoise_move);
   scm_c_define_gsubr("tortoise-reset", 0, 0, 0, &tortoise_reset_guile);
   scm_c_define_gsubr("tortoise-penup", 0, 0, 0, &tortoise_penup_guile);
   scm_c_define_gsubr("tortoise-pendown", 0, 0, 0, &tortoise_pendown_guile);
   scm_c_define_gsubr("tortoise-turn", 1, 0, 0, &tortoise_turn_guile);
+  scm_c_define_gsubr("tortoise-move", 1, 0, 0, &tortoise_move_guile);
   return NULL;
 }
 
