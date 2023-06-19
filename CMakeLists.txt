@@ -4,8 +4,9 @@ project(AugmentingC)
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(CMAKE_C_FLAGS "-Wall -std=gnu11 -ggdb -Wno-unused-variable ${CMAKE_C_FLAGS}")
+find_package(Lua 5.3 EXACT REQUIRED)
 
-include_directories( ${CMAKE_CURRENT_SOURCE_DIR})
+include_directories( ${LUA_INCLUDE_DIR} ${CMAKE_CURRENT_SOURCE_DIR})
 
 add_executable(AugmentingC main.c basics.c)
-target_link_libraries(AugmentingC m)
+target_link_libraries(AugmentingC m ${LUA_LIBRARIES})

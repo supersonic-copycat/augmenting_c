@@ -4,6 +4,10 @@
 #include <unistd.h>
 #include "basics.h"
 
+#include "lua.h"
+#include "lualib.h"
+#include "lauxlib.h"
+
 static const int WIDTH = 10;
 static const int HEIGHT = 10;
 
