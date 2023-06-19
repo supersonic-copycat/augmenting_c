@@ -43,6 +43,8 @@ static FILE *start_gnuplot() {
 }
 
 int main(int argc, char **argv, char **envp) {
+  lua_State *L = luaL_newstate();
+  luaL_openlibs(L);
   global_output = start_gnuplot();
   tortoise_reset();
   {
@@ -53,5 +55,6 @@ int main(int argc, char **argv, char **envp) {
       tortoise_turn(90.0);
     }
   }
+  lua_close(L);
   return EXIT_SUCCESS;
 }
