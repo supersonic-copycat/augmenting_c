@@ -45,8 +45,21 @@ static FILE *start_gnuplot() {
 int main(int argc, char **argv, char **envp) {
   lua_State *L = luaL_newstate();
   luaL_openlibs(L);
+  char *err_desc;
+  size_t err_len;
   global_output = start_gnuplot();
   tortoise_reset();
+  if (luaL_loadfile(L, NULL) == LUA_OK) {
+    if (lua_pcall(L, 0, 0, 0) == LUA_OK) {
+		// nothing to do just yet
+    } else {
+      err_desc = (char *)lua_tolstring(L, lua_gettop(L), &err_len);
+      fprintf(stderr, "Error occured!\n\"%s\"\n", err_desc);
+    }
+  } else {
+    err_desc = (char *)lua_tolstring(L, lua_gettop(L), &err_len);
+    fprintf(stderr, "Error occured!\n\"%s\"\n", err_desc);
+  }
   {
     int i;
     tortoise_pendown(); /* This is unnecessary, but makes it clearer.  */
