@@ -8,5 +8,5 @@ find_package(Lua 5.3 EXACT REQUIRED)
 
 include_directories( ${LUA_INCLUDE_DIR} ${CMAKE_CURRENT_SOURCE_DIR})
 
-add_executable(AugmentingC main.c basics.c)
+add_executable(AugmentingC main.c basics.c luad.c)
 target_link_libraries(AugmentingC m ${LUA_LIBRARIES})
